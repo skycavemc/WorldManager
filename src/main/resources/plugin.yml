@@ -1,0 +1,36 @@
+name: WorldManager
+version: 1.0.3
+author: Hakuyamu
+main: de.leonheuer.worldmanager.WorldManager
+api-version: 1.16
+
+softdepend:
+  - SkyBeeCore
+
+commands:
+  worldmanager:
+    aliases:
+      - wm
+    permission: worldmanager.command
+    permission-message: "§8§l(§6§lWS§8§l) §cDu hast keine Rechte für diesen Befehl."
+
+permissions:
+  worldmanager.bypass:
+    break:
+      description: bypass break flag
+    ignite:
+      description: bypass ignite flag
+    place:
+      description: bypass place flag
+    forbidden:
+      description: bypass forbidden flag
+    pvp:
+      description: bypass pvp flag
+    pve:
+      description: bypass pve flag
+    bucket:
+      description: bypass bucket flag
+    interact:
+      description: bypass interact flag
+    vehicle:
+      description: bypass vehicle flag
