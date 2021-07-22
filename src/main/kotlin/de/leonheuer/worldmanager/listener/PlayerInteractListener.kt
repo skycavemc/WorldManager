@@ -48,13 +48,16 @@ class PlayerInteractListener(private val main: WorldManager) : Listener {
             if (profile.isFlagDenied(Flag.INTERACT)) {
                 if (event.rightClicked !is LivingEntity) {
                     event.isCancelled = true
+                    return
                 }
             }
             if (profile.whitelist && !profile.isInteractDenied(event.rightClicked.type)) {
                 event.isCancelled = true
+                return
             }
             if (!profile.whitelist && profile.isInteractDenied(event.rightClicked.type)) {
                 event.isCancelled = true
+                return
             }
         }
     }

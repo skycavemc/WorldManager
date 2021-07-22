@@ -85,7 +85,10 @@ enum class Message(private val message: String) {
     // help subcommand
     HELP_HEADER("&8┏━━━━━━━━━━━━━━━┫ &eSeite %page/%max&8 ┣━━━━━━━━━━━━━━━┓"),
     HELP_FOOTER("&8┗━━━━━━━━━━━━━━━┫ &eSeite %page/%max&8 ┣━━━━━━━━━━━━━━━┛"),
-    HELP_INVALID_PAGE("&cEs gibt nur %max Seiten.")
+    HELP_INVALID_PAGE("&cEs gibt nur %max Seiten."),
+
+    // interact messages
+    INTERACT_FORBIDDEN_ENTITY("&cDie Interaktion mit %entity ist in der Welt %world verboten."),
     ;
 
     fun getRaw(): String {
