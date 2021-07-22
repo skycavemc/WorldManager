@@ -9,7 +9,7 @@ enum class Flag(val type: FlagType, val pack: FlagPackage) {
     IGNITE(FlagType.PLAYER, FlagPackage.FULL),
     BUCKET_USE(FlagType.PLAYER, FlagPackage.FULL),
     VULNERABLE(FlagType.PLAYER, FlagPackage.EXTENDED),
-    PVP(FlagType.PLAYER, FlagPackage.FULL),
+    PVP(FlagType.PLAYER, FlagPackage.BASIC),
     PVE(FlagType.PLAYER, FlagPackage.EXTENDED),
     SLOW_VOID_DEATH(FlagType.PLAYER, FlagPackage.EXTENDED),
 
