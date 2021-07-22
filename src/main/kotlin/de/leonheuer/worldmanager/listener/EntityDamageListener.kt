@@ -45,10 +45,8 @@ class EntityDamageListener(private val main: WorldManager) : Listener {
         val attacker = event.damager
         if (attacker is Player) {
             if (event.entity is Player) {
-                if (!attacker.hasPermission("worldmanager.bypass.pvp")) {
-                    if (main.dm!!.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.PVP)) {
-                        event.isCancelled = true
-                    }
+                if (main.dm!!.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.PVP)) {
+                    event.isCancelled = true
                 }
             } else if (event.entity is LivingEntity) {
                 if (!attacker.hasPermission("worldmanager.bypass.pve")) {
