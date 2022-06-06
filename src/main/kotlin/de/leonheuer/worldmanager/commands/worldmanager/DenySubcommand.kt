@@ -74,7 +74,7 @@ class DenySubcommand(private val sender: CommandSender, private val args: Array<
             return
         }
 
-        if (args[2].equals("all", ignoreCase = true)) {
+        if (args[2].equals("all", true)) {
             Flag.values().forEach(profile::denyFlag)
             sender.sendMessage(Message.DENY_SUCCESS_ALL.getMessage().replace("%world", world.name))
             return

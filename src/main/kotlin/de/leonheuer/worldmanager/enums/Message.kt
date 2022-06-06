@@ -49,6 +49,15 @@ enum class Message(private val message: String) {
     ALLOW_INTERACT_HELP("&e/wm allowInteract <Welt> <Entity>"),
     ALLOW_INTERACT_ALREADY("&cInteraktionen mit &4%entity &csind bereits für die Welt &4%world &cverboten!"),
     ALLOW_INTERACT_SUCCESS("&aInteraktionen mit &2%entity &afür die Welt &2%world &aerlaubt!"),
+
+    // info subcommand
+    INFO_HELP("&e/wm info <Welt>"),
+    INFO_HEADER("&8━━━━━━━━━━━━━━━┫ &eInfos zur Welt %world&8 ┣━━━━━━━━━━━━━━━"),
+    INFO_UUID("&bUUID: &7%uuid"),
+    INFO_FLAGS("&bFlags: &7%flags"),
+    INFO_SPAWN("&bSpawnen: &7%spawn"),
+    INFO_INTERACT("&bInteragieren: &7%interact"),
+    INFO_WHITELIST("&bWhitelist: %whitelist"),
     
     // whitelist subcommand
     WHITELIST_HELP("&e/wm whitelist <Welt>"),
@@ -73,8 +82,9 @@ enum class Message(private val message: String) {
     HELP_DENY_SPAWN("&b/wm denySpawn <Flag> <Welt>\n&8» &7Verbietet das Spawen eines Entities"),
     HELP_ALLOW_INTERACT("&b/wm allowInteract <Flag> <Welt>\n&8» &7Erlaubt Interaktionen mit bestimmten Entities"),
     HELP_DENY_INTERACT("&b/wm denyInteract <Flag> <Welt>\n&8» &7Verbietet Interaktionen mit bestimmten Entities"),
+    HELP_INFO("&b/wm info <Welt>\n&8» &7Zeigt Informationen über die angegebene Welt an"),
     HELP_WHITELIST("&b/wm whitelist\n&8» &7Schaltet den Whitelist-Modus einer Welt um"),
-    HELP_WORLDSPAWN("&b/wm worldspawn\n&8» &7Setzt den globalen Respawn-Punkt"),
+    HELP_SETWORLDSPAWN("&b/wm setworldspawn\n&8» &7Setzt den globalen Respawn-Punkt"),
     HELP_FLAGS("&b/wm flags\n&8» &7Liste aller Flags"),
     HELP_WORLDS("&b/wm worlds\n&8» &7Liste aller Welten"),
     HELP_ENTITIES("&b/wm entities\n&8» &7Liste aller Entities"),

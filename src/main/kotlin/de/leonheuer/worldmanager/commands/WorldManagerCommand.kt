@@ -32,9 +32,47 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
             "allowspawn" -> AllowSpawnSubcommand(sender, args, main).runTask(main)
             "denyinteract" -> DenyInteractSubcommand(sender, args, main).runTask(main)
             "allowinteract" -> AllowInteractSubcommand(sender, args, main).runTask(main)
-            "whitelist" -> {
+            "info" -> {
                 if (args.size < 2) {
                     sender.sendMessage(Message.WHITELIST_HELP.getMessage())
+                    return true
+                }
+
+                val world = Bukkit.getWorld(args[1])
+                if (world == null) {
+                    sender.sendMessage(Message.UNKNOWN_WORLD.getMessage().replace("%world", args[1]))
+                    return true
+                }
+                val profile = main.dataManager.getWorldProfile(world)
+                if (profile == null) {
+                    sender.sendMessage(Message.UNKNOWN_WORLD.getMessage().replace("%world", args[1]))
+                    return true
+                }
+
+                val flags = StringJoiner(", ")
+                for (flag in profile.flags) {
+                    flags.add(flag.name.lowercase())
+                }
+                val spawn = StringJoiner(", ")
+                for (entity in profile.spawnList) {
+                    spawn.add(entity.name.lowercase())
+                }
+                val interact = StringJoiner(", ")
+                for (entity in profile.interactList) {
+                    interact.add(entity.name.lowercase())
+                }
+
+                sender.sendMessage(Message.INFO_HEADER.getMessage())
+                sender.sendMessage(Message.INFO_UUID.getMessage().replace("%uuid", world.uid.toString()))
+                sender.sendMessage(Message.INFO_FLAGS.getMessage().replace("%flags", flags.toString()))
+                sender.sendMessage(Message.INFO_SPAWN.getMessage().replace("%spawn", spawn.toString()))
+                sender.sendMessage(Message.INFO_INTERACT.getMessage().replace("%interact", interact.toString()))
+                sender.sendMessage(Message.INFO_WHITELIST.getMessage()
+                    .replace("%whitelist", if (profile.whitelist) "&aAktiviert" else "&cDeaktiviert"))
+            }
+            "whitelist" -> {
+                if (args.size < 2) {
+                    sender.sendMessage(Message.INFO_HELP.getMessage())
                     return true
                 }
 
@@ -106,7 +144,7 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
 
                 help(sender, 1)
             }
-            "worldspawn" -> {
+            "setworldspawn" -> {
                 if (sender !is Player) {
                     main.logger.severe("This command is for players only!")
                     return true
@@ -133,7 +171,7 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
             arguments.add("allowInteract")
             arguments.add("denyInteract")
             arguments.add("whitelist")
-            arguments.add("worldspawn")
+            arguments.add("setworldspawn")
             arguments.add("worlds")
             arguments.add("entities")
             arguments.add("flags")
@@ -141,7 +179,7 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
             arguments.add("packs")
             arguments.add("help")
             StringUtil.copyPartialMatches(args[0], arguments, completions)
-        } else if (args[0].equals("allow", ignoreCase = true) || args[0].equals("deny", ignoreCase = true)) {
+        } else if (args[0].equals("allow", true) || args[0].equals("deny", true)) {
             if (args.size == 2) {
                 Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
                 StringUtil.copyPartialMatches(args[1], arguments, completions)
@@ -152,10 +190,10 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
                 arguments.add("all")
                 StringUtil.copyPartialMatches(args[2], arguments, completions)
             }
-        } else if (args[0].equals("allowSpawn", ignoreCase = true) ||
-            args[0].equals("denySpawn", ignoreCase = true) ||
-            args[0].equals("allowInteract", ignoreCase = true) ||
-            args[0].equals("denyInteract", ignoreCase = true))
+        } else if (args[0].equals("allowSpawn", true) ||
+            args[0].equals("denySpawn", true) ||
+            args[0].equals("allowInteract", true) ||
+            args[0].equals("denyInteract", true))
         {
             if (args.size == 2) {
                 Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
@@ -164,7 +202,7 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
                 EntityType.values().forEach { entity -> arguments.add(entity.toString().lowercase()) }
                 StringUtil.copyPartialMatches(args[2], arguments, completions)
             }
-        } else if (args[0].equals("whitelist", ignoreCase = true)) {
+        } else if (args[0].equals("whitelist", true)) {
             Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
             StringUtil.copyPartialMatches(args[1], arguments, completions)
         }
@@ -185,6 +223,7 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
                 sender.sendMessage(Message.HELP_ALLOW_SPAWN.getFormatted())
                 sender.sendMessage(Message.HELP_DENY_INTERACT.getFormatted())
                 sender.sendMessage(Message.HELP_ALLOW_INTERACT.getFormatted())
+                sender.sendMessage(Message.HELP_INFO.getFormatted())
                 sender.sendMessage(Message.HELP_WHITELIST.getFormatted())
                 sender.sendMessage(Message.HELP_FOOTER.getFormatted()
                     .replace("%page", "$page")
@@ -194,7 +233,7 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
                 sender.sendMessage(Message.HELP_HEADER.getFormatted()
                     .replace("%page", "$page")
                     .replace("%max", "2"))
-                sender.sendMessage(Message.HELP_WORLDSPAWN.getFormatted())
+                sender.sendMessage(Message.HELP_SETWORLDSPAWN.getFormatted())
                 sender.sendMessage(Message.HELP_FLAGS.getFormatted())
                 sender.sendMessage(Message.HELP_WORLDS.getFormatted())
                 sender.sendMessage(Message.HELP_ENTITIES.getFormatted())
