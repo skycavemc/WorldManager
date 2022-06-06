@@ -13,17 +13,17 @@ class BlockIgniteListener(private val main: WorldManager) : Listener {
         val player = event.player
         if (player == null) {
             if (event.cause == BlockIgniteEvent.IgniteCause.LIGHTNING) {
-                if (main.dm!!.getWorldProfile(event.block.world)!!.isFlagDenied(Flag.BLOCK_LIGHTNING)) {
+                if (main.dataManager.getWorldProfile(event.block.world)!!.isFlagDenied(Flag.BLOCK_LIGHTNING)) {
                     event.isCancelled = true
                 }
             } else {
-                if (main.dm!!.getWorldProfile(event.block.world)!!.isFlagDenied(Flag.BLOCK_BURN)) {
+                if (main.dataManager.getWorldProfile(event.block.world)!!.isFlagDenied(Flag.BLOCK_BURN)) {
                     event.isCancelled = true
                 }
             }
         } else {
             if (!player.hasPermission("worldmanager.bypass.ignite")) {
-                if (main.dm!!.getWorldProfile(event.player!!.world)!!.isFlagDenied(Flag.IGNITE)) {
+                if (main.dataManager.getWorldProfile(event.player!!.world)!!.isFlagDenied(Flag.IGNITE)) {
                     event.isCancelled = true
                 }
             }

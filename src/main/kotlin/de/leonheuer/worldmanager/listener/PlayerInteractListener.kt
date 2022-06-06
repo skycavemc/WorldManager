@@ -2,6 +2,7 @@ package de.leonheuer.worldmanager.listener
 
 import de.leonheuer.worldmanager.WorldManager
 import de.leonheuer.worldmanager.enums.Flag
+import de.leonheuer.worldmanager.enums.Message
 import de.leonheuer.worldmanager.util.Util
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
@@ -17,7 +18,7 @@ class PlayerInteractListener(private val main: WorldManager) : Listener {
     fun onPlayerInteract(event: PlayerInteractEvent) {
         val player = event.player
         val block = event.clickedBlock ?: return
-        if (main.dm!!.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.INTERACT)) {
+        if (main.dataManager.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.INTERACT)) {
             if (event.action == Action.PHYSICAL && block.type.isInteractable) {
                 event.isCancelled = true
                 return
@@ -44,20 +45,22 @@ class PlayerInteractListener(private val main: WorldManager) : Listener {
     @EventHandler
     fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
         if (!event.player.hasPermission("worldmanager.bypass.interact")) {
-            val profile = main.dm!!.getWorldProfile(event.player.world) ?: return
+            val world = event.player.world
+
+            val profile = main.dataManager.getWorldProfile(world) ?: return
             if (profile.isFlagDenied(Flag.INTERACT)) {
                 if (event.rightClicked !is LivingEntity) {
                     event.isCancelled = true
                     return
                 }
             }
-            if (profile.whitelist && !profile.isInteractDenied(event.rightClicked.type)) {
+
+            val type = event.rightClicked.type
+            if (profile.whitelist != profile.isInteractDenied(type)) {
                 event.isCancelled = true
-                return
-            }
-            if (!profile.whitelist && profile.isInteractDenied(event.rightClicked.type)) {
-                event.isCancelled = true
-                return
+                event.player.sendMessage(Message.INTERACT_FORBIDDEN_ENTITY.getMessage()
+                    .replace("%entity", type.name)
+                    .replace("%world", world.name))
             }
         }
     }
@@ -65,7 +68,7 @@ class PlayerInteractListener(private val main: WorldManager) : Listener {
     @EventHandler
     fun onPlayerArmorStandManipulate(event: PlayerArmorStandManipulateEvent) {
         if (!event.player.hasPermission("worldmanager.bypass.interact")) {
-            if (main.dm!!.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.INTERACT)) {
+            if (main.dataManager.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.INTERACT)) {
                 event.isCancelled = true
             }
         }

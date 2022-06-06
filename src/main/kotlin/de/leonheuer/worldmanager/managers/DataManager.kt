@@ -23,10 +23,10 @@ import kotlin.collections.ArrayList
 
 class DataManager(private val main: WorldManager) {
 
-    private val path = "plugins/WorldManager/"
-    private val path2 = "plugins/WorldManager/worlds/"
-    private val path3 = "plugins/WorldManager/deleted/"
-    private val worldProfiles = HashMap<World, WorldProfile>()
+    private val path = main.dataFolder.path
+    private val worldsPath = "$path/worlds/"
+    private val deletedPath = "$path/deleted/"
+    private val worldProfiles = HashMap<UUID, WorldProfile>()
     var spawn: Location? = null
 
     init {
@@ -36,7 +36,7 @@ class DataManager(private val main: WorldManager) {
     private fun readData() {
         val jsonParser = JSONParser()
 
-        val dir = File(path2)
+        val dir = File(worldsPath)
         if (!dir.exists()) {
             dir.mkdirs()
             return
@@ -65,50 +65,21 @@ class DataManager(private val main: WorldManager) {
         }
 
         for (world in Bukkit.getWorlds()) {
-            val wf = File("${path2}${world.uid}.json")
-            if (!wf.exists()) {
-                worldProfiles[world] = WorldProfile(this, world, ArrayList(), ArrayList(), ArrayList(), false)
-                continue
-            }
-
-            try {
-                FileReader(wf).use { reader ->
-                    val data = jsonParser.parse(reader) as JSONObject
-
-                    val flagsData = data["flags"] as JSONArray
-                    val flags: ArrayList<Flag> = ArrayList()
-                    flagsData.forEach { flag -> flags.add(Flag.valueOf(flag as String)) }
-
-                    val denySpawnData = data["denySpawn"] as JSONArray
-                    val denySpawn: ArrayList<EntityType> = ArrayList()
-                    denySpawnData.forEach { entityType -> denySpawn.add(EntityType.valueOf(entityType as String)) }
-
-                    val denyInteractData = data["denyInteract"] as JSONArray
-                    val denyInteract: ArrayList<EntityType> = ArrayList()
-                    denyInteractData.forEach { entityType -> denyInteract.add(EntityType.valueOf(entityType as String)) }
-
-                    val whitelist = (data["whitelist"] as String).toBoolean()
-                    worldProfiles[world] = WorldProfile(this, world, flags, denySpawn, denyInteract, whitelist)
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
+            loadWorld(world)
         }
 
         if (dir.listFiles() != null) {
             for (file in dir.listFiles()!!) {
                 val world = Bukkit.getWorld(UUID.fromString(file.nameWithoutExtension))
                 if (world == null) {
-                    val dir2 = File(path3)
+                    val dir2 = File(deletedPath)
                     if (!dir2.exists()) {
                         dir2.mkdirs()
                     }
                     try {
                         Files.move(
-                            FileSystems.getDefault().getPath(path2, file.name),
-                            FileSystems.getDefault().getPath(path3, file.name),
+                            FileSystems.getDefault().getPath(worldsPath, file.name),
+                            FileSystems.getDefault().getPath(deletedPath, file.name),
                             StandardCopyOption.REPLACE_EXISTING
                         )
                     } catch (e: IOException) {
@@ -119,8 +90,51 @@ class DataManager(private val main: WorldManager) {
         }
     }
 
+    fun loadWorld(world: World) {
+        val wf = File("${worldsPath}${world.uid}.json")
+        if (!wf.exists()) {
+            worldProfiles[world.uid] = WorldProfile(this, world, ArrayList(), ArrayList(), ArrayList(), false)
+            main.logger.info("Created new world profile for world ${world.name} with UUID ${world.uid}")
+            return
+        }
+
+        try {
+            val parser = JSONParser()
+            FileReader(wf).use { reader ->
+                val data = parser.parse(reader) as JSONObject
+
+                val flagsData = data["flags"] as JSONArray
+                val flags: ArrayList<Flag> = ArrayList()
+                flagsData.forEach { flag -> flags.add(Flag.valueOf(flag as String)) }
+
+                val denySpawnData = data["denySpawn"] as JSONArray
+                val denySpawn: ArrayList<EntityType> = ArrayList()
+                denySpawnData.forEach { entityType -> denySpawn.add(EntityType.valueOf(entityType as String)) }
+
+                val denyInteractData = data["denyInteract"] as JSONArray
+                val denyInteract: ArrayList<EntityType> = ArrayList()
+                denyInteractData.forEach { entityType -> denyInteract.add(EntityType.valueOf(entityType as String)) }
+
+                val whitelist = (data["whitelist"] as String).toBoolean()
+                worldProfiles[world.uid] = WorldProfile(this, world, flags, denySpawn, denyInteract, whitelist)
+            }
+            main.logger.info("§aSuccessfully loaded world profile for world ${world.name} with UUID ${world.uid}")
+        } catch (e: IOException) {
+            e.printStackTrace()
+            main.logger.severe("Failed to load world profile for world ${world.name} with UUID ${world.uid}")
+        } catch (e: ParseException) {
+            e.printStackTrace()
+            main.logger.severe("Failed to load world profile for world ${world.name} with UUID ${world.uid}")
+        }
+    }
+
+    fun unloadWorld(world: World) {
+        worldProfiles.remove(world.uid)
+        main.logger.info("Unloaded world profile for world ${world.name} with UUID ${world.uid}")
+    }
+
     fun writeWorldData(wp: WorldProfile) {
-        val wf = File("${path2}${wp.world.uid}.json")
+        val wf = File("${worldsPath}${wp.world.uid}.json")
         if (!wf.exists()) {
             try {
                 wf.createNewFile()
@@ -156,9 +170,7 @@ class DataManager(private val main: WorldManager) {
     }
 
     fun writeSpawn() {
-        if (spawn == null) {
-            return
-        }
+        val spawn = this.spawn ?: return
 
         val file = File("${path}config.json")
         if (!file.exists()) {
@@ -172,12 +184,12 @@ class DataManager(private val main: WorldManager) {
 
         val data = JSONObject()
         val spawnData = JSONObject()
-        spawnData["world"] = spawn!!.world.uid.toString()
-        spawnData["x"] = spawn!!.x
-        spawnData["y"] = spawn!!.y
-        spawnData["z"] = spawn!!.z
-        spawnData["yaw"] = spawn!!.yaw
-        spawnData["pitch"] = spawn!!.pitch
+        spawnData["world"] = spawn.world.uid.toString()
+        spawnData["x"] = spawn.x
+        spawnData["y"] = spawn.y
+        spawnData["z"] = spawn.z
+        spawnData["yaw"] = spawn.yaw
+        spawnData["pitch"] = spawn.pitch
         data["spawn"] = spawnData
 
         try {
@@ -190,8 +202,8 @@ class DataManager(private val main: WorldManager) {
         }
     }
 
-    fun getWorldProfile(world: World?): WorldProfile? {
-        return worldProfiles.getOrDefault(world, null)
+    fun getWorldProfile(world: World): WorldProfile? {
+        return worldProfiles[world.uid]
     }
 
 }

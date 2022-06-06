@@ -19,7 +19,7 @@ class BlockPlaceListener(private val main: WorldManager) : Listener {
             }
         } else {
             if (!event.player.hasPermission("worldmanager.bypass.place")) {
-                if (main.dm!!.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.PLACE)) {
+                if (main.dataManager.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.PLACE)) {
                     event.isCancelled = true
                 }
             }

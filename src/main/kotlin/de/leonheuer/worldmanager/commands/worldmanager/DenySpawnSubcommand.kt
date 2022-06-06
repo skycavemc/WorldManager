@@ -18,7 +18,11 @@ class DenySpawnSubcommand(private val sender: CommandSender, private val args: A
         }
 
         val world = Bukkit.getWorld(args[1])
-        val profile = main.dm!!.getWorldProfile(world)
+        if (world == null) {
+            sender.sendMessage(Message.UNKNOWN_WORLD.getMessage().replace("%world", args[1]))
+            return
+        }
+        val profile = main.dataManager.getWorldProfile(world)
         if (profile == null) {
             sender.sendMessage(Message.UNKNOWN_WORLD.getMessage().replace("%world", args[1]))
             return
@@ -29,11 +33,11 @@ class DenySpawnSubcommand(private val sender: CommandSender, private val args: A
             if (profile.denySpawn(spawnType)) {
                 sender.sendMessage(Message.DENY_SPAWN_SUCCESS.getMessage()
                     .replace("%entity", spawnType.toString().lowercase())
-                    .replace("%world", world!!.name))
+                    .replace("%world", world.name))
             } else {
                 sender.sendMessage(Message.DENY_SPAWN_ALREADY.getMessage()
                     .replace("%entity", spawnType.toString().lowercase())
-                    .replace("%world", world!!.name))
+                    .replace("%world", world.name))
             }
         } catch (e: IllegalArgumentException) {
             sender.sendMessage(Message.UNKNOWN_ENTITY.getMessage().replace("%entity", args[2]))

@@ -9,9 +9,9 @@ enum class FlagType {
     ;
 
     companion object {
-        fun fromString(type: String?): FlagType? {
+        fun fromString(type: String): FlagType? {
             for (result in values()) {
-                if (result.toString().equals(type, ignoreCase = true)) {
+                if (result.toString().equals(type, true)) {
                     return result
                 }
             }

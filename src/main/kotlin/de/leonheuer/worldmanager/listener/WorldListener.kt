@@ -15,7 +15,7 @@ class WorldListener(private val main: WorldManager) : Listener {
 
     @EventHandler
     fun onEntitySpawn(event: EntitySpawnEvent) {
-        val profile = main.dm!!.getWorldProfile(event.location.world) ?: return
+        val profile = main.dataManager.getWorldProfile(event.location.world) ?: return
         if (profile.isFlagDenied(Flag.ENTITY_SPAWN)) {
             if (event.entity is LivingEntity && event.entity !is Player) {
                 event.isCancelled = true
@@ -33,7 +33,7 @@ class WorldListener(private val main: WorldManager) : Listener {
     @EventHandler
     fun onEntityPickupItem(event: EntityPickupItemEvent) {
         if (event.entity !is Player) {
-            if (main.dm!!.getWorldProfile(event.entity.world)!!.isFlagDenied(Flag.ENTITY_PICKUP)) {
+            if (main.dataManager.getWorldProfile(event.entity.world)!!.isFlagDenied(Flag.ENTITY_PICKUP)) {
                 event.isCancelled = true
             }
         }
@@ -41,14 +41,14 @@ class WorldListener(private val main: WorldManager) : Listener {
 
     @EventHandler
     fun onLeavesDecay(event: LeavesDecayEvent) {
-        if (main.dm!!.getWorldProfile(event.block.world)!!.isFlagDenied(Flag.LEAVES_DECAY)) {
+        if (main.dataManager.getWorldProfile(event.block.world)!!.isFlagDenied(Flag.LEAVES_DECAY)) {
             event.isCancelled = true
         }
     }
 
     @EventHandler
     fun onCreeperIgnite(event: CreeperIgniteEvent) {
-        if (main.dm!!.getWorldProfile(event.entity.world)!!.isFlagDenied(Flag.CREEPER_POWER)) {
+        if (main.dataManager.getWorldProfile(event.entity.world)!!.isFlagDenied(Flag.CREEPER_POWER)) {
             event.isCancelled = true
         }
     }

@@ -16,11 +16,11 @@ class EntityDamageListener(private val main: WorldManager) : Listener {
     fun onEntityDamage(event: EntityDamageEvent) {
         val entity = event.entity
         if (entity is Player) {
-            val profile = main.dm!!.getWorldProfile(entity.getWorld())!!
+            val profile = main.dataManager.getWorldProfile(entity.getWorld())!!
             if (profile.isFlagDenied(Flag.SLOW_VOID_DEATH)) {
                 if (event.cause == DamageCause.FALL && entity.location.y < 0) {
                     event.isCancelled = true
-                    entity.teleport(main.dm!!.spawn!!)
+                    entity.teleport(main.dataManager.spawn!!)
                     return
                 }
             }
@@ -45,18 +45,18 @@ class EntityDamageListener(private val main: WorldManager) : Listener {
         val attacker = event.damager
         if (attacker is Player) {
             if (event.entity is Player) {
-                if (main.dm!!.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.PVP)) {
+                if (main.dataManager.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.PVP)) {
                     event.isCancelled = true
                 }
             } else if (event.entity is LivingEntity) {
                 if (!attacker.hasPermission("worldmanager.bypass.pve")) {
-                    if (main.dm!!.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.PVE)) {
+                    if (main.dataManager.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.PVE)) {
                         event.isCancelled = true
                     }
                 }
             } else {
                 if (!attacker.hasPermission("worldmanager.bypass.break")) {
-                    if (main.dm!!.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.BREAK)) {
+                    if (main.dataManager.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.BREAK)) {
                         event.isCancelled = true
                     }
                 }

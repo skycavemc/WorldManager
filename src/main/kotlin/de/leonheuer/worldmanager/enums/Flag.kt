@@ -35,9 +35,9 @@ enum class Flag(val type: FlagType, val pack: FlagPackage) {
     ;
 
     companion object {
-        fun fromString(flag: String?): Flag? {
+        fun fromString(flag: String): Flag? {
             for (result in values()) {
-                if (result.toString().equals(flag, ignoreCase = true)) {
+                if (result.toString().equals(flag, true)) {
                     return result
                 }
             }

@@ -18,7 +18,7 @@ import java.lang.NumberFormatException
 import java.util.*
 
 class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, TabCompleter {
-    
+
     override fun onCommand(sender: CommandSender, cmd: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             help(sender, 1)
@@ -39,7 +39,11 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
                 }
 
                 val world = Bukkit.getWorld(args[1])
-                val profile = main.dm!!.getWorldProfile(world)
+                if (world == null) {
+                    sender.sendMessage(Message.UNKNOWN_WORLD.getMessage().replace("%world", args[1]))
+                    return true
+                }
+                val profile = main.dataManager.getWorldProfile(world)
                 if (profile == null) {
                     sender.sendMessage(Message.UNKNOWN_WORLD.getMessage().replace("%world", args[1]))
                     return true
@@ -47,9 +51,9 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
 
                 profile.whitelist = !profile.whitelist
                 if (profile.whitelist) {
-                    sender.sendMessage(Message.WHITELIST_ON.getMessage().replace("%world", world!!.name))
+                    sender.sendMessage(Message.WHITELIST_ON.getMessage().replace("%world", world.name))
                 } else {
-                    sender.sendMessage(Message.WHITELIST_OFF.getMessage().replace("%world", world!!.name))
+                    sender.sendMessage(Message.WHITELIST_OFF.getMessage().replace("%world", world.name))
                 }
             }
             "worlds" -> {
@@ -107,8 +111,8 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
                     main.logger.severe("This command is for players only!")
                     return true
                 }
-                main.dm!!.spawn = sender.location
-                main.dm!!.writeSpawn()
+                main.dataManager.spawn = sender.location
+                main.dataManager.writeSpawn()
                 sender.sendMessage(Message.WORLDSPAWN_SUCCESS.getMessage())
             }
             else -> sender.sendMessage(Message.UNKNOWN_COMMAND.getMessage().replace("%cmd", label))
@@ -152,14 +156,14 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
             args[0].equals("denySpawn", ignoreCase = true) ||
             args[0].equals("allowInteract", ignoreCase = true) ||
             args[0].equals("denyInteract", ignoreCase = true))
-            {
-                if (args.size == 2) {
-                    Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
-                    StringUtil.copyPartialMatches(args[1], arguments, completions)
-                } else if (args.size == 3) {
-                    EntityType.values().forEach { entity -> arguments.add(entity.toString().lowercase()) }
-                    StringUtil.copyPartialMatches(args[2], arguments, completions)
-                }
+        {
+            if (args.size == 2) {
+                Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
+                StringUtil.copyPartialMatches(args[1], arguments, completions)
+            } else if (args.size == 3) {
+                EntityType.values().forEach { entity -> arguments.add(entity.toString().lowercase()) }
+                StringUtil.copyPartialMatches(args[2], arguments, completions)
+            }
         } else if (args[0].equals("whitelist", ignoreCase = true)) {
             Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
             StringUtil.copyPartialMatches(args[1], arguments, completions)

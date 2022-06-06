@@ -18,7 +18,7 @@ class VehicleListener(private val main: WorldManager) : Listener {
         val attacker = event.attacker
         if (attacker is Player) {
             if (!attacker.hasPermission("worldmanager.bypass.vehicle")) {
-                if (main.dm!!.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.VEHICLE_DAMAGE)) {
+                if (main.dataManager.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.VEHICLE_DAMAGE)) {
                     event.isCancelled = true
                 }
             }
@@ -30,7 +30,7 @@ class VehicleListener(private val main: WorldManager) : Listener {
         val attacker = event.attacker
         if (attacker is Player) {
             if (!attacker.hasPermission("worldmanager.bypass.vehicle")) {
-                if (main.dm!!.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.VEHICLE_DESTROY)) {
+                if (main.dataManager.getWorldProfile(attacker.getWorld())!!.isFlagDenied(Flag.VEHICLE_DESTROY)) {
                     event.isCancelled = true
                 }
             }
@@ -42,7 +42,7 @@ class VehicleListener(private val main: WorldManager) : Listener {
         val entered = event.entered
         if (entered is Player) {
             if (!entered.hasPermission("worldmanager.bypass.vehicle")) {
-                if (main.dm!!.getWorldProfile(entered.getWorld())!!.isFlagDenied(Flag.VEHICLE_ENTER)) {
+                if (main.dataManager.getWorldProfile(entered.getWorld())!!.isFlagDenied(Flag.VEHICLE_ENTER)) {
                     event.isCancelled = true
                 }
             }
@@ -52,7 +52,7 @@ class VehicleListener(private val main: WorldManager) : Listener {
     @EventHandler
     fun onVehicleCollision(event: VehicleEntityCollisionEvent) {
         if (event.vehicle !is LivingEntity) {
-            if (main.dm!!.getWorldProfile(event.vehicle.world)!!.isFlagDenied(Flag.VEHICLE_COLLISION)) {
+            if (main.dataManager.getWorldProfile(event.vehicle.world)!!.isFlagDenied(Flag.VEHICLE_COLLISION)) {
                 event.isCancelled = true
             }
         }

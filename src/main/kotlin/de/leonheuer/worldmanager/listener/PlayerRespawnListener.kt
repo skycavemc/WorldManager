@@ -12,11 +12,11 @@ class PlayerRespawnListener(private val main: WorldManager) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerRespawn(event: PlayerRespawnEvent) {
-        if (main.dm!!.spawn == null) {
+        if (main.dataManager.spawn == null) {
             Bukkit.getConsoleSender().sendMessage(Message.WORLDSPAWN_NOT_YET.getMessage())
             return
         }
-        event.respawnLocation = main.dm!!.spawn!!
+        event.respawnLocation = main.dataManager.spawn!!
     }
 
 }

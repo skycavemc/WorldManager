@@ -13,7 +13,7 @@ class BlockBreakListener(private val main: WorldManager) : Listener {
     @EventHandler
     fun onBlockBreak(event: BlockBreakEvent) {
         if (!event.player.hasPermission("worldmanager.bypass.break")) {
-            if (main.dm!!.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.BREAK)) {
+            if (main.dataManager.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.BREAK)) {
                 event.isCancelled = true
             }
         }
@@ -23,7 +23,7 @@ class BlockBreakListener(private val main: WorldManager) : Listener {
     fun onHangingBreakByEntityEvent(event: HangingBreakByEntityEvent) {
         if (event.remover is Player) {
             if (!event.remover!!.hasPermission("worldmanager.bypass.break")) {
-                if (main.dm!!.getWorldProfile(event.remover!!.world)!!.isFlagDenied(Flag.BREAK)) {
+                if (main.dataManager.getWorldProfile(event.remover!!.world)!!.isFlagDenied(Flag.BREAK)) {
                     event.isCancelled = true
                 }
             }

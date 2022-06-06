@@ -91,10 +91,6 @@ enum class Message(private val message: String) {
     INTERACT_FORBIDDEN_ENTITY("&cDie Interaktion mit %entity ist in der Welt %world verboten."),
     ;
 
-    fun getRaw(): String {
-        return message
-    }
-
     fun getFormatted(): String {
         return ChatColor.translateAlternateColorCodes('&', message)
     }

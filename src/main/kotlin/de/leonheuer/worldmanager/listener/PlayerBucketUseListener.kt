@@ -12,7 +12,7 @@ class PlayerBucketUseListener(private val main: WorldManager) : Listener {
     @EventHandler
     fun onPlayerBucket(event: PlayerBucketEmptyEvent) {
         if (!event.player.hasPermission("worldmanager.bypass.bucket")) {
-            if (main.dm!!.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.BUCKET_USE)) {
+            if (main.dataManager.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.BUCKET_USE)) {
                 event.isCancelled = true
             }
         }
@@ -21,7 +21,7 @@ class PlayerBucketUseListener(private val main: WorldManager) : Listener {
     @EventHandler
     fun onPlayerBucket(event: PlayerBucketFillEvent) {
         if (!event.player.hasPermission("worldmanager.bypass.bucket")) {
-            if (main.dm!!.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.BUCKET_USE)) {
+            if (main.dataManager.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.BUCKET_USE)) {
                 event.isCancelled = true
             }
         }

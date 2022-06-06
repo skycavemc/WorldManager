@@ -1,18 +1,14 @@
 name: WorldManager
-version: 1.0.4
-author: Hakuyamu
+version: 2.0.0
+authors: [ Hakuyamu ]
 main: de.leonheuer.worldmanager.WorldManager
-api-version: 1.16
-
-softdepend:
-  - SkyBeeCore
+api-version: 1.18
+softdepend: [ SkyBeeCore ]
 
 commands:
   worldmanager:
-    aliases:
-      - wm
+    aliases: [ wm ]
     permission: worldmanager.command
-    permission-message: "§8§l(§6§lWS§8§l) §cDu hast keine Rechte für diesen Befehl."
 
 permissions:
   worldmanager.bypass:

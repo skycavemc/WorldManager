@@ -8,9 +8,9 @@ enum class FlagPackage {
     ;
 
     companion object {
-        fun fromString(pack: String?): FlagPackage? {
+        fun fromString(pack: String): FlagPackage? {
             for (result in values()) {
-                if (result.toString().equals(pack, ignoreCase = true)) {
+                if (result.toString().equals(pack, true)) {
                     return result
                 }
             }

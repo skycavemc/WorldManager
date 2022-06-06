@@ -18,7 +18,11 @@ class AllowInteractSubcommand(private val sender: CommandSender, private val arg
         }
 
         val world = Bukkit.getWorld(args[1])
-        val profile = main.dm!!.getWorldProfile(world)
+        if (world == null) {
+            sender.sendMessage(Message.UNKNOWN_WORLD.getMessage().replace("%world", args[1]))
+            return
+        }
+        val profile = main.dataManager.getWorldProfile(world)
         if (profile == null) {
             sender.sendMessage(Message.UNKNOWN_WORLD.getMessage().replace("%world", args[1]))
             return
@@ -29,11 +33,11 @@ class AllowInteractSubcommand(private val sender: CommandSender, private val arg
             if (profile.allowInteract(spawnType)) {
                 sender.sendMessage(Message.ALLOW_INTERACT_SUCCESS.getMessage()
                     .replace("%entity", spawnType.toString().lowercase())
-                    .replace("%world", world!!.name))
+                    .replace("%world", world.name))
             } else {
                 sender.sendMessage(Message.ALLOW_INTERACT_ALREADY.getMessage()
                     .replace("%entity", spawnType.toString().lowercase())
-                    .replace("%world", world!!.name))
+                    .replace("%world", world.name))
             }
         } catch (e: IllegalArgumentException) {
             sender.sendMessage(Message.UNKNOWN_ENTITY.getMessage().replace("%entity", args[2]))
