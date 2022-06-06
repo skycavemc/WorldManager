@@ -25,7 +25,6 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
             return true
         }
 
-        val sj = StringJoiner("§8, §a")
         when (args[0].lowercase()) {
             "allow" -> AllowSubcommand(sender, args, main).runTask(main)
             "deny" -> DenySubcommand(sender, args, main).runTask(main)
@@ -54,27 +53,38 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
                 }
             }
             "worlds" -> {
-                Bukkit.getWorlds().forEach { world -> sj.add(world.name) }
-                sender.sendMessage(Message.LIST_WORLDS.getMessage().replace("%worlds", sj.toString()))
+                val sj = StringJoiner("§8, §7")
+                Bukkit.getWorlds().forEach {
+                    sj.add(it.name)
+                }
+                sender.sendMessage(Message.LIST_WORLDS.getFormatted().replace("%worlds", sj.toString()))
             }
             "entities" -> {
-                EntityType.values().forEach { entity -> sj.add(entity.toString().lowercase()) }
-                sender.sendMessage(Message.LIST_ENTITIES.getMessage().replace("%entities", sj.toString()))
+                val sj = StringJoiner("§8, §7")
+                EntityType.values().forEach {
+                    sj.add(it.toString().lowercase())
+                }
+                sender.sendMessage(Message.LIST_ENTITIES.getFormatted().replace("%entities", sj.toString()))
             }
             "flags" -> {
-                Flag.values().forEach { flag -> sj.add(flag.toString().lowercase()) }
-                sender.sendMessage(Message.LIST_FLAGS.getMessage().replace("%flags", sj.toString()))
+                val sj = StringJoiner("§8, §7")
+                Flag.values().forEach {
+                    sj.add(it.toString().lowercase())
+                }
+                sender.sendMessage(Message.LIST_FLAGS.getFormatted().replace("%flags", sj.toString()))
             }
             "types" -> FlagType.values().forEach { type ->
+                val sj = StringJoiner("§8, §7")
                 Flag.values().filter { flag -> flag.type == type }.forEach{ flag -> sj.add(flag.toString().lowercase()) }
-                sender.sendMessage(Message.LIST_TYPES.getMessage()
+                sender.sendMessage(Message.LIST_TYPES.getFormatted()
                     .replace("%type", type.toString())
                     .replace("%flags", sj.toString())
                 )
             }
             "packs" -> FlagPackage.values().forEach { pack ->
+                val sj = StringJoiner("§8, §7")
                 Flag.values().filter { flag -> flag.pack == pack }.forEach{ flag -> sj.add(flag.toString().lowercase()) }
-                sender.sendMessage(Message.LIST_PACKS.getMessage()
+                sender.sendMessage(Message.LIST_PACKS.getFormatted()
                     .replace("%pack", pack.toString())
                     .replace("%flags", sj.toString())
                 )
