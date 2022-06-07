@@ -34,7 +34,7 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
             "allowinteract" -> AllowInteractSubcommand(sender, args, main).runTask(main)
             "info" -> {
                 if (args.size < 2) {
-                    sender.sendMessage(Message.WHITELIST_HELP.getMessage())
+                    sender.sendMessage(Message.INFO_HELP.getMessage())
                     return true
                 }
 
@@ -62,17 +62,22 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
                     interact.add(entity.name.lowercase())
                 }
 
-                sender.sendMessage(Message.INFO_HEADER.getMessage())
-                sender.sendMessage(Message.INFO_UUID.getMessage().replace("%uuid", world.uid.toString()))
-                sender.sendMessage(Message.INFO_FLAGS.getMessage().replace("%flags", flags.toString()))
-                sender.sendMessage(Message.INFO_SPAWN.getMessage().replace("%spawn", spawn.toString()))
-                sender.sendMessage(Message.INFO_INTERACT.getMessage().replace("%interact", interact.toString()))
-                sender.sendMessage(Message.INFO_WHITELIST.getMessage()
-                    .replace("%whitelist", if (profile.whitelist) "&aAktiviert" else "&cDeaktiviert"))
+                sender.sendMessage(Message.INFO_HEADER.getFormatted()
+                    .replace("%world", world.name))
+                sender.sendMessage(Message.INFO_UUID.getFormatted()
+                    .replace("%uuid", world.uid.toString()))
+                sender.sendMessage(Message.INFO_FLAGS.getFormatted()
+                    .replace("%flags", flags.toString()))
+                sender.sendMessage(Message.INFO_SPAWN.getFormatted()
+                    .replace("%spawn", spawn.toString()))
+                sender.sendMessage(Message.INFO_INTERACT.getFormatted()
+                    .replace("%interact", interact.toString()))
+                sender.sendMessage(Message.INFO_WHITELIST.getFormatted()
+                    .replace("%whitelist", if (profile.whitelist) "§aAktiviert" else "§cDeaktiviert"))
             }
             "whitelist" -> {
                 if (args.size < 2) {
-                    sender.sendMessage(Message.INFO_HELP.getMessage())
+                    sender.sendMessage(Message.WHITELIST_HELP.getMessage())
                     return true
                 }
 
@@ -164,47 +169,34 @@ class WorldManagerCommand(private val main: WorldManager) : CommandExecutor, Tab
         val completions: ArrayList<String> = ArrayList()
 
         if (args.size == 1) {
-            arguments.add("allow")
-            arguments.add("deny")
-            arguments.add("allowSpawn")
-            arguments.add("denySpawn")
-            arguments.add("allowInteract")
-            arguments.add("denyInteract")
-            arguments.add("whitelist")
-            arguments.add("setworldspawn")
-            arguments.add("worlds")
-            arguments.add("entities")
-            arguments.add("flags")
-            arguments.add("types")
-            arguments.add("packs")
-            arguments.add("help")
+            arguments.addAll(arrayOf("allow", "deny", "allowSpawn", "denySpawn", "allowInteract", "denyInteract",
+                "info", "whitelist", "setworldspawn", "worlds", "entities", "flags", "types", "packs", "help"))
             StringUtil.copyPartialMatches(args[0], arguments, completions)
-        } else if (args[0].equals("allow", true) || args[0].equals("deny", true)) {
-            if (args.size == 2) {
-                Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
-                StringUtil.copyPartialMatches(args[1], arguments, completions)
-            } else if (args.size == 3) {
-                Flag.values().forEach { flag -> arguments.add(flag.toString().lowercase()) }
-                FlagType.values().forEach { type -> arguments.add("@${type.toString().lowercase()}") }
-                FlagPackage.values().forEach { pack -> arguments.add("-${pack.toString().lowercase()}") }
-                arguments.add("all")
-                StringUtil.copyPartialMatches(args[2], arguments, completions)
+        }
+
+        if (args.size == 2) {
+            when (args[0].lowercase()) {
+                "allow", "deny", "info", "allowSpawn", "denySpawn", "allowInteract", "denyInteract", "whitelist" -> {
+                    Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
+                    StringUtil.copyPartialMatches(args[1], arguments, completions)
+                }
             }
-        } else if (args[0].equals("allowSpawn", true) ||
-            args[0].equals("denySpawn", true) ||
-            args[0].equals("allowInteract", true) ||
-            args[0].equals("denyInteract", true))
-        {
-            if (args.size == 2) {
-                Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
-                StringUtil.copyPartialMatches(args[1], arguments, completions)
-            } else if (args.size == 3) {
-                EntityType.values().forEach { entity -> arguments.add(entity.toString().lowercase()) }
-                StringUtil.copyPartialMatches(args[2], arguments, completions)
+        }
+
+        if (args.size == 3) {
+            when (args[0].lowercase()) {
+                "allow", "deny" -> {
+                    Flag.values().forEach { flag -> arguments.add(flag.toString().lowercase()) }
+                    FlagType.values().forEach { type -> arguments.add("@${type.toString().lowercase()}") }
+                    FlagPackage.values().forEach { pack -> arguments.add("-${pack.toString().lowercase()}") }
+                    arguments.add("all")
+                    StringUtil.copyPartialMatches(args[2], arguments, completions)
+                }
+                "allowSpawn", "denySpawn", "allowInteract", "denyInteract" -> {
+                    EntityType.values().forEach { entity -> arguments.add(entity.toString().lowercase()) }
+                    StringUtil.copyPartialMatches(args[2], arguments, completions)
+                }
             }
-        } else if (args[0].equals("whitelist", true)) {
-            Bukkit.getWorlds().forEach { world -> arguments.add(world.name) }
-            StringUtil.copyPartialMatches(args[1], arguments, completions)
         }
 
         completions.sort()

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "de.leonheuer.worldmanager"
-version = "2.0.0"
+version = "2.0.1"
 
 repositories {
     mavenCentral()
@@ -28,7 +28,7 @@ tasks {
     }
 
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveBaseName.set("${project.name}-standalone")
+        archiveFileName.set("${project.name}-${project.version}_STANDALONE.jar")
         mergeServiceFiles()
         manifest {
             attributes(mapOf("Main-Class" to "de.leonheuer.worldmanager.WorldManager"))

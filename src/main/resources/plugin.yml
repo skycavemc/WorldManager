@@ -1,8 +1,9 @@
 name: WorldManager
-version: 2.0.0
+version: 2.0.1
 authors: [ Hakuyamu ]
 main: de.leonheuer.worldmanager.WorldManager
 api-version: 1.18
+depend: [ Multiverse-Core ]
 softdepend: [ SkyBeeCore ]
 
 commands:

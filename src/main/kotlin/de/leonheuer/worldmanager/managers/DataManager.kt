@@ -93,7 +93,9 @@ class DataManager(private val main: WorldManager) {
     fun loadWorld(world: World) {
         val wf = File("${worldsPath}${world.uid}.json")
         if (!wf.exists()) {
-            worldProfiles[world.uid] = WorldProfile(this, world, ArrayList(), ArrayList(), ArrayList(), false)
+            val wp = WorldProfile(this, world, ArrayList(), ArrayList(), ArrayList(), false)
+            writeWorldData(wp)
+            worldProfiles[world.uid] = wp
             main.logger.info("Created new world profile for world ${world.name} with UUID ${world.uid}")
             return
         }
@@ -118,7 +120,7 @@ class DataManager(private val main: WorldManager) {
                 val whitelist = (data["whitelist"] as String).toBoolean()
                 worldProfiles[world.uid] = WorldProfile(this, world, flags, denySpawn, denyInteract, whitelist)
             }
-            main.logger.info("§aSuccessfully loaded world profile for world ${world.name} with UUID ${world.uid}")
+            main.logger.info("Successfully loaded world profile for world ${world.name} with UUID ${world.uid}")
         } catch (e: IOException) {
             e.printStackTrace()
             main.logger.severe("Failed to load world profile for world ${world.name} with UUID ${world.uid}")
