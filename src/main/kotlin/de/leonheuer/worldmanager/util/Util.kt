@@ -26,9 +26,8 @@ object Util {
         materials.add(Material.END_CRYSTAL)
 
         Material.values().filter {
-            it.toString().contains("POTION") ||
-                    it.toString().contains("SPAWN_EGG") ||
-                    it.toString().contains("MINECART")
+            it.toString().contains("POTION") || it.toString().contains("SPAWN_EGG") ||
+                    it.toString().contains("MINECART") || it.toString().contains("BOAT")
         }.forEach(materials::add)
 
         return materials

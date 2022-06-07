@@ -19,7 +19,7 @@ class PlayerInteractListener(private val main: WorldManager) : Listener {
         val player = event.player
         val block = event.clickedBlock ?: return
         if (main.dataManager.getWorldProfile(event.player.world)!!.isFlagDenied(Flag.INTERACT)) {
-            if (event.action == Action.PHYSICAL && block.type.isInteractable) {
+            if (event.action == Action.PHYSICAL) {
                 event.isCancelled = true
                 return
             }
